@@ -15,7 +15,9 @@ const GOOGLE_CLIENT_ID      = process.env.GOOGLE_CLIENT_ID;
 const FACEBOOK_APP_ID       = process.env.FACEBOOK_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET  = process.env.GOOGLE_CLIENT_SECRET;
 const FACEBOOK_APP_SECRET   = process.env.FACEBOOK_CLIENT_SECRET;
-const PASSPORT_LOCAL_SECRET = process.env.SECRET
+const PASSPORT_LOCAL_SECRET = process.env.SECRET;
+const ATLAS_USER            = process.env.ATLAS_USER;
+const ATLAS_KEY             = process.env.ATLAS_KEY;
 
 const app = express();
 app.use(express.static("public"));
@@ -31,7 +33,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 mongoose.set('strictQuery',false);
-mongoose.connect("mongodb://localhost:27017/userDB")
+mongoose.connect("mongodb+srv://"+ ATLAS_USER + ":"+ ATLAS_KEY +"@cluster0.zxkgieq.mongodb.net/?retryWrites=true&w=majority")
 
 const userSchema = new mongoose.Schema({
     email:String,
@@ -63,7 +65,7 @@ passport.deserializeUser(function(user, cb) {
 passport.use(new GoogleStrategy({
     clientID: GOOGLE_CLIENT_ID,
     clientSecret: GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:3000/auth/google/secrets",
+    callbackURL: "https://sorin-secrets.onrender.com/auth/google/secrets",
     userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
   },
   function(accessToken, refreshToken, profile, cb) {
@@ -75,7 +77,7 @@ passport.use(new GoogleStrategy({
 passport.use(new FacebookStrategy({
     clientID: FACEBOOK_APP_ID,
     clientSecret: FACEBOOK_APP_SECRET,
-    callbackURL: "http://localhost:3000/auth/facebook/secrets"
+    callbackURL: "https://sorin-secrets.onrender.com/auth/facebook/secrets"
   },
   function(accessToken, refreshToken, profile, cb) {
     User.findOrCreate({ facebookId: profile.id }, function (err, user) {
